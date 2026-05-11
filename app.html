@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestivalBuddy - Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-app">
+
+<header>
+    <div class="header-top-row">
+        <div class="header-left">
+            <div class="nav-days" id="dayNav"></div>
+            <button onclick="openModal('infoOverlay')" class="btn-icon-round">i</button>
+        </div>
+    </div>
+    <div class="toolbar">
+        <div class="actions">
+            <button id="lockBtn" onclick="toggleLock()">🔓 Lock</button>
+            <button onclick="openModal('helpOverlay')">❓ Anleitung</button>
+            <button onclick="exportMyPlan()" class="btn-export">📤 Teilen</button>
+            <button onclick="openModal('importOverlay')">➕ Freunde</button>
+            <button onclick="window.location.href='index.html'">🏠 Home</button>
+        </div>
+    </div>
+    <div id="buddyContainer" class="buddy-bar"></div>
+</header>
+
+<div id="messageOverlay" class="overlay">
+    <div class="modal">
+        <h3 id="messageTitle">Hinweis</h3>
+        <p id="messageText"></p>
+        <button onclick="closeModal('messageOverlay')" class="btn-full">OK</button>
+    </div>
+</div>
+
+<div id="exportOverlay" class="overlay">
+    <div class="modal">
+        <h3>Dein Plan zum Teilen</h3>
+        <p style="font-size: 0.8rem; color: #aaa;">Sende diesen Link an deine Freunde. Er enthält deine aktuelle Auswahl.</p>
+        <textarea id="exportCodeArea" rows="5" readonly onclick="this.select()"></textarea>
+        <button onclick="copyExportCode()" class="btn-full">Teilen / Kopieren</button>
+        <button onclick="closeModal('exportOverlay')" class="btn-full" style="background:#444">Schließen</button>
+    </div>
+</div>
+
+<div id="importOverlay" class="overlay">
+    <div class="modal">
+        <h3>Freunde hinzufügen</h3>
+        <p style="font-size: 0.8rem;">Füge Links oder Codes ein (einer pro Zeile möglich):</p>
+        <textarea id="friendCodeInput" rows="6" placeholder="Links hier einfügen..."></textarea>
+        <button onclick="confirmFriendImport()" class="btn-full">Importieren</button>
+        <button onclick="closeModal('importOverlay')" class="btn-full" style="background:#444">Abbrechen</button>
+    </div>
+</div>
+
+<div id="helpOverlay" class="overlay">
+    <div class="modal">
+        <h3>📖 Anleitung</h3>
+        <div class="doku-list">
+            <p><b>1. Bands wählen:</b> Klicke auf einen Act im Plan. Ein <b>roter Rand</b> bedeutet, dass du dort bist. Deine Auswahl wird automatisch gespeichert.</p>
+            <p><b>2. 🔒 Lock-Modus:</b> Aktiviere "Lock", um versehentliches Klicken beim Scrollen in der Menge zu verhindern.</p>
+            <p><b>3. 📤 Teilen:</b> Klicke auf "Teilen", um einen Link zu generieren. Schicke diesen an deine Freunde.</p>
+            <p><b>4. ➕ Freunde hinzufügen:</b> Füge den Link/Code eines Freundes ein. Er erscheint als farbiger Badge oben.</p>
+            <p><b>5. 👥 Buddy-Filter & Matches:</b>
+                <ul>
+                    <li>Klicke auf den Namen eines Freundes, um seine Auswahl ein/auszublenden.</li>
+                    <li><b>Gelbe Box:</b> Match! Du und ein Freund wollt zu diesem Act.</li>
+                    <li>In der Box siehst du unten klein die Namen der Freunde, die auch dort sind.</li>
+                </ul>
+            </p>
+            <div class="warning-box">
+                ⚠️ <b>Hinweis:</b> Daten werden nur lokal im Browser gespeichert. Löschst du den Cache, ist dein Plan weg. Nutze "Teilen", um dir selbst ein Backup des Links zu schicken!
+            </div>
+        </div>
+        <button onclick="closeModal('helpOverlay')" class="btn-full">OK</button>
+    </div>
+</div>
+
+<div id="startOverlay" class="overlay"><div class="modal"><h2>Willkommen</h2><p>Dein Name:</p><input type="text" id="initialInput"><button onclick="handleInitialStart()" class="btn-full">Starten</button></div></div>
+<div id="infoOverlay" class="overlay"><div class="modal"><h2>Festival Info</h2><div id="festFullDetails"></div><button class="btn-full" onclick="closeModal('infoOverlay')">Schließen</button></div></div>
+
+<div class="wrapper">
+    <div id="mainGrid" class="grid"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

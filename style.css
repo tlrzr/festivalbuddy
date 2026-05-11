@@ -1,0 +1,320 @@
+/* --- VARIABLEN & BASIS --- */
+:root {
+    --bg: #0d0d0d;
+    --card: #1a1a1a;
+    --text: #eee;
+    --accent: #ff4757;
+    --match-full: #f1c40f;
+    --match-others: #85752b;
+    --locked: #ffcc00;
+    --border: #333;
+}
+
+* { box-sizing: border-box; }
+
+body { 
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+    background: var(--bg); 
+    color: var(--text); 
+    margin: 0; 
+    overflow-x: hidden; 
+}
+
+/* --- HEADER & TOOLBAR --- */
+header { 
+    background: #000; 
+    padding: 10px 12px; 
+    border-bottom: 1px solid var(--border); 
+    position: sticky; 
+    top: 0; 
+    z-index: 100; 
+}
+
+.header-top-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 8px;
+}
+
+.header-left { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.toolbar { 
+    display: flex; 
+    justify-content: center; 
+    margin: 8px 0; 
+}
+
+.actions { 
+    display: flex; 
+    gap: 6px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+}
+
+/* --- NAV-TAGE --- */
+.nav-days { display: flex; gap: 4px; }
+.nav-days button {
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+.nav-days button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* --- BUTTONS --- */
+button {
+    cursor: pointer;
+    font-family: inherit;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+button:active { transform: scale(0.95); }
+
+.btn-icon-round {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; font-weight: bold; background: #333;
+}
+
+.btn-full { 
+    width: 100%; 
+    padding: 14px; 
+    background: var(--accent); 
+    border: none; 
+    color: white; 
+    font-weight: bold; 
+    margin-top: 12px; 
+    font-size: 1rem;
+    border-radius: 8px;
+}
+
+.btn-danger-outline { border-color: #b33939; color: #ff5252; background: transparent; }
+
+/* --- MODALE & OVERLAYS --- */
+.overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0, 0, 0, 0.85); 
+    backdrop-filter: blur(5px);
+    z-index: 1000; 
+    display: none; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px;
+}
+
+/* CRITICAL: Das Nachrichten-Overlay (Fehler/Erfolg) muss über ALLES andere */
+#messageOverlay { 
+    z-index: 2000; 
+}
+
+.modal { 
+    background: var(--card); 
+    padding: 24px; 
+    border-radius: 16px; 
+    width: 100%;
+    max-width: 420px; 
+    border: 1px solid #444; 
+    max-height: 90vh; 
+    overflow-y: auto; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.modal h2, .modal h3 { margin-top: 0; margin-bottom: 12px; color: #fff; }
+
+/* --- INPUTS & TEXTAREA --- */
+input[type="text"], textarea {
+    width: 100%;
+    background: #000;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    margin-top: 10px;
+    display: block;
+    font-family: inherit;
+}
+
+textarea {
+    font-family: 'Courier New', monospace;
+    resize: none;
+    min-height: 100px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.2);
+}
+
+/* --- BUDDY BAR --- */
+.buddy-bar { 
+    display: flex; 
+    gap: 8px; 
+    overflow-x: auto; 
+    padding: 10px 12px; 
+    background: #080808; 
+    scrollbar-width: none; 
+}
+
+.buddy-bar::-webkit-scrollbar { display: none; }
+
+.buddy-badge { 
+    white-space: nowrap; 
+    padding: 6px 14px; 
+    border-radius: 20px; 
+    font-size: 0.75rem; 
+    background: #1a1a1a; 
+    border: 1px solid var(--b-color); 
+    opacity: 0.4; 
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #fff;
+}
+
+.buddy-badge.active { 
+    opacity: 1; 
+    background: var(--b-color); 
+    color: #000; 
+    font-weight: bold; 
+}
+
+/* --- GRID SYSTEM --- */
+.wrapper { padding: 4px; }
+
+.grid { 
+    display: grid; 
+    gap: 2px; 
+    background: #222; 
+    border: 1px solid #333; 
+    position: relative;
+}
+
+.stage-header { 
+    background: #111; 
+    padding: 12px 4px; 
+    font-weight: bold; 
+    text-align: center; 
+    font-size: 0.7rem; 
+    position: sticky; 
+    top: 0; 
+    z-index: 20; 
+    border-bottom: 2px solid var(--accent);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.time-label { 
+    font-size: 0.65rem; 
+    color: #777; 
+    text-align: right; 
+    padding-right: 6px; 
+    font-family: monospace;
+    background: var(--bg);
+}
+
+/* --- ACTS / CARDS --- */
+.act { 
+    background: #262626; 
+    border-radius: 4px; 
+    padding: 5px; 
+    font-size: 0.72rem; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    overflow: hidden; 
+    cursor: pointer; 
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+}
+
+.act-name { font-weight: bold; line-height: 1.1; margin-bottom: 3px; }
+
+/* Status-Farben */
+.act.is-me { 
+    border: 2px solid var(--accent); 
+    background: #3d1619; 
+}
+
+.act.is-match-full { 
+    background: var(--match-full); 
+    color: #000; 
+    border: 2px solid #fff; 
+}
+
+.act.is-match-others { 
+    background: var(--match-others); 
+    color: #fff; 
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Tags für Freunde im Act */
+.buddy-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: auto;
+}
+
+.tag {
+    font-size: 0.55rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    background: rgba(0,0,0,0.4);
+    padding: 1px 4px;
+    border-radius: 3px;
+    line-height: 1;
+}
+
+/* --- HILFE & DOKU --- */
+.doku-list { font-size: 0.9rem; line-height: 1.5; color: #ccc; }
+.doku-list p { margin: 12px 0; }
+.doku-list b { color: var(--accent); }
+.doku-list ul { padding-left: 20px; margin: 8px 0; }
+.doku-list li { margin-bottom: 6px; }
+
+.warning-box { 
+    background: #332200; 
+    padding: 15px; 
+    border-radius: 10px; 
+    margin-top: 15px; 
+    border-left: 5px solid #f1c40f; 
+    font-size: 0.8rem;
+    color: #fff;
+}
+
+/* Home Page Cards */
+.festival-selection-container { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+.festival-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    border: 1px solid #333;
+}
+.fest-name { font-weight: bold; font-size: 1.1rem; display: block; }
+.fest-meta { font-size: 0.8rem; color: #888; }

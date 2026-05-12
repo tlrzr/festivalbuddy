@@ -13,7 +13,7 @@
     <div class="header-top-row">
         <div class="header-left">
             <div class="nav-days" id="dayNav"></div>
-            <button onclick="openModal('infoOverlay')" class="btn-icon-round">i</button>
+            <button onclick="openModal('infoOverlay')" class="btn-icon-round" aria-label="Info öffnen">i</button>
         </div>
     </div>
     <div class="toolbar">
@@ -25,14 +25,14 @@
             <button onclick="window.location.href='index.html'">🏠 Home</button>
         </div>
     </div>
-    <div id="buddyContainer" class="buddy-bar"></div>
+    <div id="buddyContainer" class="buddy-bar" role="list" aria-label="Freunde-Liste"></div>
 </header>
 
 <div id="messageOverlay" class="overlay">
     <div class="modal">
         <h3 id="messageTitle">Hinweis</h3>
         <p id="messageText"></p>
-        <button onclick="closeModal('messageOverlay')" class="btn-full">OK</button>
+        <button onclick="closeModal('messageOverlay')" class="btn-full" aria-label="Nachricht schließen">OK</button>
     </div>
 </div>
 
@@ -75,7 +75,7 @@
                 ⚠️ <b>Hinweis:</b> Daten werden nur lokal im Browser gespeichert. Löschst du den Cache, ist dein Plan weg. Nutze "Teilen", um dir selbst ein Backup des Links zu schicken!
             </div>
         </div>
-        <button onclick="closeModal('helpOverlay')" class="btn-full">OK</button>
+        <button onclick="closeModal('helpOverlay')" class="btn-full" aria-label="Anleitung schließen">OK</button>
     </div>
 </div>
 

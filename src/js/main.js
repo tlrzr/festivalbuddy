@@ -173,6 +173,33 @@ window.toggleBuddyVisibility = (n) => {
 };
 
 window.toggleLock = toggleLock;
+window.resetData = () => {
+    if (!confirm('Möchtest du wirklich alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+        return;
+    }
+    try {
+        // Lösche Daten aus localStorage
+        saveData(getEventId(), { name: '', acts: [], lastUpdated: 0 });
+        
+        // Reset myData
+        myData = { name: '', acts: [], lastUpdated: 0 };
+        
+        // Leere das Input-Feld
+        const input = document.getElementById('initialInput');
+        if (input) {
+            input.value = '';
+        }
+        
+        // Öffne das Start-Modal
+        openModal('startOverlay');
+        
+        console.log("✅ Reset durchgeführt - Start-Modal angezeigt");
+        showMessage("Reset erfolgreich", "Alle Daten wurden gelöscht. Gib deinen Namen neu ein.");
+    } catch (e) {
+        console.error('Fehler beim Reset:', e);
+        showMessage('Fehler', 'Reset konnte nicht durchgeführt werden: ' + e.message);
+    }
+};
 
 window.setCurrentDayAndRender = (day) => {
     try {

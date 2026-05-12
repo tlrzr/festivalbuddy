@@ -46,7 +46,14 @@ festivalbuddy/
    ```
    Öffne `http://localhost:5173` im Browser.
 
-3. **Build für Produktion**:
+3. **Tests ausführen**:
+   ```bash
+   npm test              # Alle Tests einmal
+   npm run test:watch    # Tests im Watch-Modus
+   npm run test:coverage # Coverage-Report
+   ```
+
+4. **Build für Produktion**:
    ```bash
    npm run build
    ```

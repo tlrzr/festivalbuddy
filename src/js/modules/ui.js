@@ -169,7 +169,7 @@ export function render(timetable, currentDay, myData, buddies) {
             
             const timeStr = `${formatTime(start)} - ${formatTime(end)}`;
             const tags = activeBuddies.map(n => `<span class="tag" style="color:${buddies[n].color}">${escapeHtml(n)}</span>`).join(' ');
-            card.innerHTML = `<div class="act-time">${timeStr}</div><span class="act-name">${escapeHtml(act.act)}</span><div class="buddy-tags">${tags}</div>`;
+            card.innerHTML = `<span class="act-name">${escapeHtml(act.act)}</span><div class="act-time">${timeStr}</div><div class="buddy-tags">${tags}</div>`;
             grid.appendChild(card);
         });
     } catch (e) {

@@ -111,7 +111,7 @@ export function render(timetable, currentDay, myData, buddies) {
     }
 }
 
-export function setupEventDelegation(myData, save, renderCallback) {
+export function setupEventDelegation(myData, save, renderCallback, trackClickCallback) {
     try {
         const grid = document.getElementById('mainGrid');
         if (!grid) {
@@ -134,6 +134,10 @@ export function setupEventDelegation(myData, save, renderCallback) {
                 try {
                     save(); 
                     renderCallback();
+                    // Klick zählen für Erinnerung
+                    if (typeof trackClickCallback === 'function') {
+                        trackClickCallback();
+                    }
                 } catch (e) {
                     console.error("Fehler beim Speichern:", e);
                     showMessage("Fehler", e.message || "Daten konnten nicht gespeichert werden");
@@ -211,10 +215,65 @@ export function handleInitialStart(myData, save, startApp) {
         myData.lastUpdated = Date.now();
         
         save();
+        closeModal('startOverlay');
         startApp();
     } catch (e) {
         console.error("Fehler bei Initialisierung:", e);
         showMessage("Fehler", e.message || "Es ist ein Fehler aufgetreten");
+    }
+}
+
+export function handleCodeImportAtStart(myData, importFn, save, startApp) {
+    try {
+        const input = document.getElementById('startCodeInput');
+        if (!input) {
+            console.warn("startCodeInput nicht gefunden");
+            return;
+        }
+
+        const code = input.value.trim();
+        if (!code) {
+            showMessage("Eingabe erforderlich", "Bitte füge einen Code ein");
+            return;
+        }
+
+        // Versuche Code zu importieren
+        const imported = importFn(code);
+        if (!imported) {
+            showMessage("Fehler", "Code konnte nicht importiert werden. Überprüfe ihn und versuche es erneut.");
+            return;
+        }
+
+        // Erfolgreicher Import
+        save();
+        closeModal('startOverlay');
+        startApp();
+        showMessage("Erfolg", "Plan wurde importiert!");
+    } catch (e) {
+        console.error("Fehler beim Import beim Start:", e);
+        showMessage("Fehler", e.message || "Import ist fehlgeschlagen");
+    }
+}
+
+export function switchTab(tabName) {
+    try {
+        const nameTab = document.getElementById('startNameTab');
+        const codeTab = document.getElementById('startCodeTab');
+        
+        if (!nameTab || !codeTab) {
+            console.warn("Tab-Elemente nicht gefunden");
+            return;
+        }
+
+        if (tabName === 'name') {
+            nameTab.style.display = 'block';
+            codeTab.style.display = 'none';
+        } else if (tabName === 'code') {
+            nameTab.style.display = 'none';
+            codeTab.style.display = 'block';
+        }
+    } catch (e) {
+        console.error("Fehler beim Tab-Wechsel:", e);
     }
 }
 

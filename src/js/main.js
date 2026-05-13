@@ -1,11 +1,14 @@
-import { saveData, loadData } from './modules/storage.js';
+import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
-import { exportMyPlan, copyExportCode, confirmFriendImport, importSingleFriendFromUrl, getBuddies } from './modules/exportImport.js';
-import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked } from './modules/ui.js';
+import { exportMyPlan, copyExportCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, getBuddies } from './modules/exportImport.js';
+import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab } from './modules/ui.js';
 
 let myData = { name: "", acts: [], lastUpdated: 0 };
 let currentEventId = "";
 let currentTimetable = null;
+
+// Globaler Klick-Zähler
+window.clickCounter = 0;
 
 // Helfer: Render mit aktuellen Daten
 function doRender() {
@@ -27,6 +30,27 @@ function doSave() {
         showMessage("Fehler beim Speichern", e.message || "Deine Auswahl konnte nicht gespeichert werden");
     }
 }
+
+// Klick-Zähler: Erinnere den Nutzer alle 10 Klicks, den Code zu speichern
+function trackClickAndRemind() {
+    window.clickCounter++;
+    console.log("Klick-Zaehler:", window.clickCounter);
+    if (window.clickCounter % 10 === 0) {
+        try {
+            const exportCode = exportMyPlan(myData, getTimetable(), getEventId());
+            showMessage(
+                "💾 Code speichern",
+                `Du hast ${window.clickCounter} Aenderungen gemacht! Speichere deinen Code:\n\n${exportCode}\n\nTipp: Nutze "Teilen" fuer einen klickbaren Link.`
+            );
+            window.clickCounter = 0; // Zähler zurücksetzen
+        } catch (e) {
+            console.warn("Fehler beim Export fuer Erinnerung:", e);
+        }
+    }
+}
+
+// Mache die Funktion global verfügbar
+window.trackClickAndRemind = trackClickAndRemind;
 
 async function initHome() {
     try {
@@ -92,7 +116,8 @@ async function initApp() {
         const friendFromUrl = params.get('friend');
 
         const saved = loadData(eventId);
-        if(saved) { 
+        const startedFromSavedData = Boolean(saved);
+        if (saved) { 
             myData = saved;
             console.log("✅ Daten aus localStorage geladen:", myData);
         } else { 
@@ -111,7 +136,10 @@ async function initApp() {
             window.history.replaceState({}, document.title, newUrl);
         }
         
-        startApp();
+        if (startedFromSavedData) {
+            startApp();
+        }
+
     } catch (e) {
         console.error("Fehler beim Initialisieren der App:", e);
         showMessage("Fehler", e.message || "App konnte nicht geladen werden");
@@ -133,7 +161,7 @@ async function init() {
             initHome();
         } else if (document.getElementById('mainGrid')) {
             await initApp();
-            setupEventDelegation(myData, doSave, doRender);
+            setupEventDelegation(myData, doSave, doRender, trackClickAndRemind);
         }
     } catch (e) {
         console.error("Fehler bei Initialisierung:", e);
@@ -174,27 +202,42 @@ window.toggleBuddyVisibility = (n) => {
 
 window.toggleLock = toggleLock;
 window.resetData = () => {
-    if (!confirm('Möchtest du wirklich alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
-        return;
-    }
     try {
-        // Lösche Daten aus localStorage
-        saveData(getEventId(), { name: '', acts: [], lastUpdated: 0 });
+        openModal('resetConfirmOverlay');
+    } catch (e) {
+        console.error('Fehler beim Öffnen des Reset-Modals:', e);
+        showMessage('Fehler', 'Reset-Dialog konnte nicht angezeigt werden');
+    }
+};
+
+window.confirmReset = () => {
+    try {
+        removeData(getEventId());
         
-        // Reset myData
         myData = { name: '', acts: [], lastUpdated: 0 };
         
-        // Leere das Input-Feld
-        const input = document.getElementById('initialInput');
-        if (input) {
-            input.value = '';
+        const initialInput = document.getElementById('initialInput');
+        if (initialInput) {
+            initialInput.value = '';
         }
         
-        // Öffne das Start-Modal
+        const startCodeInput = document.getElementById('startCodeInput');
+        if (startCodeInput) {
+            startCodeInput.value = '';
+        }
+        
+        closeModal('resetConfirmOverlay');
+        
+        const nameTab = document.getElementById('startNameTab');
+        const codeTab = document.getElementById('startCodeTab');
+        if (nameTab && codeTab) {
+            nameTab.style.display = 'block';
+            codeTab.style.display = 'none';
+        }
         openModal('startOverlay');
         
         console.log("✅ Reset durchgeführt - Start-Modal angezeigt");
-        showMessage("Reset erfolgreich", "Alle Daten wurden gelöscht. Gib deinen Namen neu ein.");
+        showMessage("Reset erfolgreich", "Alle Daten wurden gelöscht. Gib deinen Namen neu ein oder importiere einen Code.");
     } catch (e) {
         console.error('Fehler beim Reset:', e);
         showMessage('Fehler', 'Reset konnte nicht durchgeführt werden: ' + e.message);
@@ -219,6 +262,45 @@ window.handleInitialStart = () => {
         console.error("Start-Fehler:", e);
     }
 };
+
+window.handleCodeImportAtStart = () => {
+    try {
+        const input = document.getElementById('startCodeInput');
+        if (!input) {
+            showMessage("Fehler", "Input-Feld nicht gefunden");
+            return;
+        }
+
+        const code = input.value.trim();
+        if (!code) {
+            showMessage("Eingabe erforderlich", "Bitte füge einen Code ein");
+            return;
+        }
+
+        // Versuche Code zu importieren
+        const imported = importPersonalData(code);
+        if (!imported) {
+            showMessage("Fehler", "Code konnte nicht importiert werden. Überprüfe ihn und versuche es erneut.");
+            return;
+        }
+
+        // Update myData
+        myData.name = imported.name;
+        myData.acts = imported.acts;
+        myData.lastUpdated = imported.lastUpdated;
+
+        // Speichern und App starten
+        doSave();
+        closeModal('startOverlay');
+        startApp();
+        showMessage("Erfolg", "Dein Plan wurde importiert!");
+    } catch (e) {
+        console.error("Fehler beim Import beim Start:", e);
+        showMessage("Fehler", e.message || "Import ist fehlgeschlagen");
+    }
+};
+
+window.switchTab = switchTab;
 
 // Modal Helper global verfügbar machen
 window.openModal = openModal;

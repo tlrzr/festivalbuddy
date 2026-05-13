@@ -13,7 +13,7 @@
     <div class="header-top-row">
         <div class="header-left">
             <div class="nav-days" id="dayNav"></div>
-            <button onclick="openModal('infoOverlay')" class="btn-icon-round" aria-label="Info öffnen">i</button>
+            <button onclick="openModal('infoOverlay'); populateInfoModal();" class="btn-icon-round" aria-label="Info öffnen">i</button>
         </div>
     </div>
     <div class="toolbar">
@@ -119,7 +119,36 @@
     </div>
 </div>
 
-<div id="infoOverlay" class="overlay"><div class="modal"><h2>Festival Info</h2><div id="festFullDetails"></div><button class="btn-full" onclick="closeModal('infoOverlay')">Schließen</button></div></div>
+<div id="infoOverlay" class="overlay">
+    <div class="modal modal-large">
+        <h2>ℹ️ Informationen</h2>
+
+        <div class="info-tabs">
+            <button class="info-tab active" onclick="switchInfoTab('festival')">Festival</button>
+            <button class="info-tab" onclick="switchInfoTab('profile')">Profil</button>
+            <button class="info-tab" onclick="switchInfoTab('stats')">Statistiken</button>
+        </div>
+
+        <div class="info-content">
+            <div id="festivalTab" class="info-tab-content active">
+                <h3>Festival-Informationen</h3>
+                <div id="festFullDetails"></div>
+            </div>
+
+            <div id="profileTab" class="info-tab-content">
+                <h3>Dein Profil</h3>
+                <div id="userProfile"></div>
+            </div>
+
+            <div id="statsTab" class="info-tab-content">
+                <h3>Deine Statistiken</h3>
+                <div id="userStats"></div>
+            </div>
+        </div>
+
+        <button class="btn-full" onclick="closeModal('infoOverlay')">Schließen</button>
+    </div>
+</div>
 
 <div class="wrapper">
     <div id="mainGrid" class="grid"></div>

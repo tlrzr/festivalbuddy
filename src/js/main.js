@@ -1,7 +1,7 @@
 import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
 import { exportMyPlan, copyExportCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, getBuddies } from './modules/exportImport.js';
-import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab } from './modules/ui.js';
+import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
 let myData = { name: "", acts: [], lastUpdated: 0 };
 let currentEventId = "";
@@ -31,26 +31,99 @@ function doSave() {
     }
 }
 
-// Klick-Zähler: Erinnere den Nutzer alle 10 Klicks, den Code zu speichern
+// Klick-Zähler: Erinnere den Nutzer alle 10 Klicks, den Code zu speichern (dezente Toast-Nachricht)
 function trackClickAndRemind() {
     window.clickCounter++;
     console.log("Klick-Zaehler:", window.clickCounter);
     if (window.clickCounter % 10 === 0) {
         try {
-            const exportCode = exportMyPlan(myData, getTimetable(), getEventId());
-            showMessage(
-                "💾 Code speichern",
-                `Du hast ${window.clickCounter} Aenderungen gemacht! Speichere deinen Code:\n\n${exportCode}\n\nTipp: Nutze "Teilen" fuer einen klickbaren Link.`
-            );
+            showToast("💾 Denke daran, deinen Code zu speichern!");
             window.clickCounter = 0; // Zähler zurücksetzen
         } catch (e) {
-            console.warn("Fehler beim Export fuer Erinnerung:", e);
+            console.warn("Fehler bei der Erinnerung:", e);
         }
     }
 }
 
 // Mache die Funktion global verfügbar
 window.trackClickAndRemind = trackClickAndRemind;
+
+// Info-Modal-Inhalte füllen
+function populateInfoModal() {
+    try {
+        // Festival-Info
+        const festDetails = document.getElementById('festFullDetails');
+        if (festDetails && currentTimetable && currentTimetable.event) {
+            const event = currentTimetable.event;
+            festDetails.innerHTML = `
+                <p><strong>Name:</strong> ${event.name || 'Unbekannt'}</p>
+                <p><strong>Ort:</strong> ${event.location || 'Unbekannt'}</p>
+                <p><strong>Datum:</strong> ${event.date || 'Unbekannt'}</p>
+                <p><strong>Beschreibung:</strong> ${event.description || 'Keine Beschreibung verfügbar'}</p>
+            `;
+        } else if (festDetails) {
+            festDetails.innerHTML = '<p>Festival-Informationen konnten nicht geladen werden.</p>';
+        }
+
+        // User-Profil
+        const userProfile = document.getElementById('userProfile');
+        if (userProfile) {
+            const lastUpdated = myData.lastUpdated ? new Date(myData.lastUpdated).toLocaleString('de-DE') : 'Nie';
+            userProfile.innerHTML = `
+                <p><strong>Name:</strong> ${myData.name || 'Unbekannt'}</p>
+                <p><strong>Letzte Änderung:</strong> ${lastUpdated}</p>
+                <p><strong>Event-ID:</strong> ${currentEventId || 'Unbekannt'}</p>
+            `;
+        }
+
+        // Statistiken
+        const userStats = document.getElementById('userStats');
+        if (userStats) {
+            const totalActs = currentTimetable ? currentTimetable.timetable.length : 0;
+            const myActs = myData.acts.length;
+            const buddies = getBuddies();
+            const totalBuddies = Object.keys(buddies).length;
+            
+            // Matches mit Freunden berechnen
+            let totalMatches = 0;
+            Object.values(buddies).forEach(buddy => {
+                buddy.acts.forEach(act => {
+                    if (myData.acts.includes(act)) {
+                        totalMatches++;
+                    }
+                });
+            });
+
+            userStats.innerHTML = `
+                <div class="info-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">${myActs}</span>
+                        <span class="stat-label">Favoriten-Acts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${totalMatches}</span>
+                        <span class="stat-label">Matches mit Freunden</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${totalBuddies}</span>
+                        <span class="stat-label">Freunde hinzugefügt</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${totalActs}</span>
+                        <span class="stat-label">Gesamt Acts</span>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error("Fehler beim Füllen des Info-Modals:", e);
+    }
+}
+
+// Mache die Funktion global verfügbar
+window.populateInfoModal = populateInfoModal;
+window.switchInfoTab = switchInfoTab;
+window.showToast = showToast;
 
 async function initHome() {
     try {

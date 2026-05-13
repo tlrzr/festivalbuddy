@@ -136,7 +136,93 @@ button:active { transform: scale(0.95); }
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
+.modal-large {
+    max-width: 600px;
+}
+
 .modal h2, .modal h3 { margin-top: 0; margin-bottom: 12px; color: #fff; }
+
+/* --- INFO TABS --- */
+.info-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.info-tab {
+    background: #333;
+    border: none;
+    color: #ccc;
+    padding: 8px 16px;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.info-tab.active {
+    background: var(--accent);
+    color: white;
+}
+
+.info-tab:hover {
+    background: #444;
+    color: white;
+}
+
+.info-tab.active:hover {
+    background: var(--accent);
+}
+
+.info-content {
+    min-height: 200px;
+}
+
+.info-tab-content {
+    display: none;
+}
+
+.info-tab-content.active {
+    display: block;
+}
+
+.info-tab-content h3 {
+    color: var(--accent);
+    margin-bottom: 16px;
+}
+
+.info-tab-content p {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.info-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.stat-item {
+    background: #333;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent);
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #ccc;
+    margin-top: 4px;
+}
 
 /* --- INPUTS & TEXTAREA --- */
 input[type="text"], textarea {
@@ -249,6 +335,13 @@ input:focus, textarea:focus {
 }
 
 .act-name { font-weight: bold; line-height: 1.1; margin-bottom: 3px; }
+
+.act-time {
+    font-size: 0.6rem;
+    color: #ccc;
+    margin-bottom: 2px;
+    font-weight: normal;
+}
 
 /* Status-Farben */
 .act.is-me { 

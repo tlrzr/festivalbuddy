@@ -225,6 +225,7 @@ async function initApp() {
 function startApp() {
     closeModal('startOverlay');
     buildNav(getTimetable(), getCurrentDay(), setCurrentDay, doRender);
+    populateInfoModal();
     doRender();
 }
 
@@ -376,7 +377,12 @@ window.handleCodeImportAtStart = () => {
 window.switchTab = switchTab;
 
 // Modal Helper global verfügbar machen
-window.openModal = openModal;
+window.openModal = (id) => {
+    if (id === 'infoOverlay') {
+        populateInfoModal();
+    }
+    openModal(id);
+};
 window.closeModal = closeModal;
 window.showMessage = showMessage;
 

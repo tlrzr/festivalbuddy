@@ -53,13 +53,12 @@ function populateInfoModal() {
     try {
         // Festival-Info
         const festDetails = document.getElementById('festFullDetails');
-        if (festDetails && currentTimetable && currentTimetable.event) {
-            const event = currentTimetable.event;
+        if (festDetails && currentTimetable) {
             festDetails.innerHTML = `
-                <p><strong>Name:</strong> ${event.name || 'Unbekannt'}</p>
-                <p><strong>Ort:</strong> ${event.location || 'Unbekannt'}</p>
-                <p><strong>Datum:</strong> ${event.date || 'Unbekannt'}</p>
-                <p><strong>Beschreibung:</strong> ${event.description || 'Keine Beschreibung verfügbar'}</p>
+                <p><strong>Name:</strong> ${currentTimetable.festival || 'Unbekannt'}</p>
+                <p><strong>Ort:</strong> ${currentTimetable.location || 'Unbekannt'}</p>
+                <p><strong>Datum:</strong> ${currentTimetable.date_start || 'Unbekannt'} - ${currentTimetable.date_end || 'Unbekannt'}</p>
+                <p><strong>Letztes Update:</strong> ${currentTimetable.last_update || 'Unbekannt'}</p>
             `;
         } else if (festDetails) {
             festDetails.innerHTML = '<p>Festival-Informationen konnten nicht geladen werden.</p>';

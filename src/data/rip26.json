@@ -4,7 +4,7 @@
   "date_start": "2026-06-05",
   "date_end": "2026-06-07",
   "location": "Nürnberg, Zeppelinfeld",
-  "last update": "2026-05-08 16:50",
+  "last_update": "2026-05-08 16:50",
   "timetable": [
     { "day": "2026-06-05", "stage": "Utopia Stage", "act": "Ecca Vandal", "start": "12:45", "end": "13:30" },
     { "day": "2026-06-05", "stage": "Utopia Stage", "act": "The Pretty Reckless", "start": "14:00", "end": "15:00" },

@@ -4,7 +4,7 @@
   "date_start": "2026-06-05",
   "date_end": "2026-06-07",
   "location": "Nürburgring, Eifel",
-  "last update": "2026-05-08 17:30",
+  "last_update": "2026-05-08 17:30",
   "timetable": [
     { "day": "2026-06-05", "stage": "Utopia Stage", "act": "Mehnersmoos", "start": "14:55", "end": "15:50" },
     { "day": "2026-06-05", "stage": "Utopia Stage", "act": "Bush", "start": "16:20", "end": "17:20" },

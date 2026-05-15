@@ -21,6 +21,7 @@
             <button id="lockBtn" onclick="toggleLock()">🔓 Lock</button>
             <button onclick="openModal('helpOverlay')">❓ Anleitung</button>
             <button onclick="exportMyPlan()" class="btn-export">📤 Teilen</button>
+            <button onclick="saveMyPlan()" class="btn-save">💾 Sichern</button>
             <button onclick="openModal('importOverlay')">➕ Freunde</button>
             <button onclick="resetData()">🔄 Reset</button>
             <button onclick="window.location.href='index.html'">🏠 Home</button>
@@ -44,6 +45,16 @@
         <textarea id="exportCodeArea" rows="5" readonly onclick="this.select()"></textarea>
         <button onclick="copyExportCode()" class="btn-full">Teilen / Kopieren</button>
         <button onclick="closeModal('exportOverlay')" class="btn-full" style="background:#444">Schließen</button>
+    </div>
+</div>
+
+<div id="saveOverlay" class="overlay">
+    <div class="modal">
+        <h3>Dein Plan zum Sichern</h3>
+        <p style="font-size: 0.8rem; color: #aaa;">Speichere diesen Link ab. Er enthält deine aktuelle Auswahl <u>und die deiner importieren Freunde</u>!</p>
+        <textarea id="saveCodeArea" rows="5" readonly onclick="this.select()"></textarea>
+        <button onclick="copySaveCode()" class="btn-full">Sichern / Kopieren</button>
+        <button onclick="closeModal('saveOverlay')" class="btn-full" style="background:#444">Schließen</button>
     </div>
 </div>
 

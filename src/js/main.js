@@ -1,6 +1,6 @@
 import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
-import { exportMyPlan, copyExportCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, getBuddies } from './modules/exportImport.js';
+import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies } from './modules/exportImport.js';
 import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
 let myData = { name: "", acts: [], lastUpdated: 0 };
@@ -273,6 +273,25 @@ window.exportMyPlan = () => {
 };
 
 window.copyExportCode = copyExportCode;
+
+window.saveMyPlan = () => {
+    try {
+        const url = saveMyPlan(myData, getEventId(), getBuddies());
+        if (!url) return;
+
+        // const area = document.getElementById('exportCodeArea');
+        const area = document.getElementById('saveCodeArea');
+        if (area) {
+            area.value = url;
+            openModal('saveOverlay');
+        }
+    } catch (e) {
+        console.error("Save-Fehler:", e);
+        showMessage("Fehler", "Plan konnte nicht gesichert werden");
+    }
+};
+
+window.copySaveCode = copySaveCode;
 
 window.confirmFriendImport = () => {
     try {

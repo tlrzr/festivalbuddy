@@ -422,12 +422,25 @@ function formatWikiLink(name, lang) {
 export function openActContextMenu(actName, x, y) {
     if (!actName) return;
     const menu = document.getElementById('actContextMenu');
-    const deLink = document.getElementById('wikiDeLink');
-    const enLink = document.getElementById('wikiEnLink');
-    if (!menu || !deLink || !enLink) return;
+    const wikiDELink = document.getElementById('wikiDeLink');
+    const wikiENLink = document.getElementById('wikiEnLink');
+    const spotifyLink = document.getElementById('spotifyLink');
+    const spotifyAppLink = document.getElementById('spotifyAppLink');
+    const youtubeLink = document.getElementById('youtubeLink');
+    const deezerLink = document.getElementById('deezerLink');
+    const soundcloudLink = document.getElementById('soundcloudLink');
+    const appleMusicLink = document.getElementById('appleMusicLink');
+    const amazonMusicLink = document.getElementById('amazonMusicLink');
+    if (!menu || !wikiDELink || !wikiENLink || !spotifyLink) return;
 
-    deLink.href = formatWikiLink(actName, 'de');
-    enLink.href = formatWikiLink(actName, 'en');
+    wikiDELink.href = formatWikiLink(actName, 'de');
+    wikiENLink.href = formatWikiLink(actName, 'en');
+    spotifyLink.href = `https://open.spotify.com/search/${encodeURIComponent(actName)}`;
+    spotifyAppLink.href = `spotify:search:${encodeURIComponent(actName)}`;
+    youtubeLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(actName)}`;
+    deezerLink.href = `https://www.deezer.com/search/${encodeURIComponent(actName)}`;
+    appleMusicLink.href = `https://music.apple.com/search?term=${encodeURIComponent(actName)}`;
+    amazonMusicLink.href = `https://music.amazon.com/search?q=${encodeURIComponent(actName)}`;
 
     menu.style.left = `${x}px`;
     menu.style.top = `${y}px`;

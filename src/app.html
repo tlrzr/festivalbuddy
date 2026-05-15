@@ -13,13 +13,18 @@
     <div class="header-main">
         <button class="btn-burger" onclick="toggleBurgerMenu()">☰</button>
         <div class="header-right">
+            <div class="dropdown">
+                <button class="btn-icon-round" onclick="toggleBuddyDropdown()" title="Freunde filtern">👥</button>
+                <div id="buddyDropdown" class="dropdown-content">
+                    <p class="dropdown-header">FREUNDE FILTER</p>
+                    <div id="buddyContainer" class="buddy-bar" role="list"></div>
+                </div>
+            </div>
             <button id="lockBtn" class="btn-icon-round" onclick="toggleLock()" title="Plan bearbeitbar">🔓</button>
             <div class="nav-days" id="dayNav"></div>
         </div>
     </div>
-    <!-- Die Buddy-Leiste bleibt außerhalb des Haupt-Headers, aber immer noch unter dem Header -->
 </header>
-<div id="buddyContainer" class="buddy-bar" role="list" aria-label="Freunde-Liste"></div>
 
 <!-- Das neue Burger-Menü (Side Menu) -->
 <div id="sideMenu" class="side-menu">
@@ -34,6 +39,7 @@
             <button onclick="resetData(); toggleBurgerMenu()">🧹 Reset</button>
             <button onclick="openHome()">🏠 Home</button>
         </nav>
+
         <div id="versionString" class="version-tag"></div>
     </div>
 </div>

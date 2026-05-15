@@ -449,7 +449,7 @@ input:focus, textarea:focus {
 
 /* --- ACTS / CARDS --- */
 .act { 
-    background: #262626; 
+    background: #1e1e1e; 
     border-radius: 4px; 
     padding: 5px; 
     font-size: 0.72rem; 
@@ -458,7 +458,7 @@ input:focus, textarea:focus {
     justify-content: center; 
     overflow: hidden; 
     cursor: pointer; 
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid #444;
     position: relative;
 }
 
@@ -472,20 +472,20 @@ input:focus, textarea:focus {
 
 /* Status-Farben */
 .act.is-me { 
-    border: 2px solid var(--accent); 
-    background: #3d1619; 
+    border: 3px solid var(--accent) !important; 
+    background: #4a1a1e; 
 }
 
 .act.is-match-full { 
     background: var(--match-full); 
     color: #000; 
-    border: 2px solid #fff; 
+    border: 3px solid var(--accent) !important; 
 }
 
 .act.is-match-others { 
     background: var(--match-others); 
     color: #fff; 
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid #777;
 }
 
 /* Tags für Freunde im Act */
@@ -560,4 +560,76 @@ input:focus, textarea:focus {
 }
 .context-menu a:hover {
   background: rgba(255,255,255,.08);
+}
+
+/* --- PRINT OPTIMIERUNGEN --- */
+@media print {
+    /* UI-Elemente ausblenden, die auf Papier keinen Sinn ergeben */
+    header, 
+    .side-menu, 
+    .overlay, 
+    .context-menu, 
+    #actContextMenu, 
+    .dropdown,
+    .btn-burger,
+    .btn-icon-round,
+    .nav-days {
+        display: none !important;
+    }
+
+    /* Druck-Layout: Weißer Hintergrund für die Seite, aber Farben für Acts erlaubt */
+    :root {
+        --bg: #fff;
+        --card: #fff;
+        --text: #111;
+        --border: #000;
+    }
+
+    body {
+        background: #fff !important;
+        color: #111 !important;
+        font-size: 10pt;
+    }
+
+    .wrapper {
+        padding: 0;
+    }
+
+    /* Grid-Anpassungen */
+    .grid {
+        background: #ddd; /* Grauer Hintergrund macht Lücken als Linien sichtbar */
+        border: 1px solid #999;
+        gap: 2px; /* Lücken explizit beibehalten */
+    }
+
+    /* Sticky-Positionierung aufheben (wichtig für korrekten Seitenumbruch) */
+    .stage-header, 
+    .time-label, 
+    .sticky-corner-header {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        background: #f0f0f0 !important;
+        color: #000 !important;
+        border: 1px solid #000 !important;
+    }
+
+    .act {
+        border: 1px solid #888 !important;
+        break-inside: avoid; /* Verhindert, dass Acts zwischen zwei Seiten zerschnitten werden */
+    }
+
+    .act.is-me {
+        background: #ffecec !important; /* Zartes Rot für den Druck */
+        border: 3px solid var(--accent) !important;
+    }
+
+    .act.is-match-full {
+        background: var(--match-full) !important;
+        border: 3px solid var(--accent) !important;
+    }
+
+    .buddy-tags .tag {
+        background: transparent !important;
+    }
 }

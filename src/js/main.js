@@ -395,6 +395,11 @@ window.setCurrentDayAndRender = (day) => {
     }
 };
 
+window.printPlan = () => {
+    // Einfach die Browser-Druckfunktion aufrufen
+    window.print();
+};
+
 window.handleInitialStart = () => {
     try {
         handleInitialStart(myData, doSave, startApp);

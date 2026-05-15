@@ -10,25 +10,33 @@
 <body class="page-app">
 
 <header>
-    <div class="header-top-row">
-        <div class="header-left">
+    <div class="header-main">
+        <button class="btn-burger" onclick="toggleBurgerMenu()">☰</button>
+        <div class="header-right">
+            <button id="lockBtn" class="btn-icon-round" onclick="toggleLock()" title="Plan bearbeitbar">🔓</button>
             <div class="nav-days" id="dayNav"></div>
-            <button onclick="openModal('infoOverlay'); populateInfoModal();" class="btn-icon-round" aria-label="Info öffnen">i</button>
         </div>
     </div>
-    <div class="toolbar">
-        <div class="actions">
-            <button id="lockBtn" onclick="toggleLock()">🔓 Lock</button>
-            <button onclick="openModal('helpOverlay')">❓ Anleitung</button>
-            <button onclick="exportMyPlan()" class="btn-export">📤 Teilen</button>
-            <button onclick="saveMyPlan()" class="btn-save">💾 Sichern</button>
-            <button onclick="openModal('importOverlay')">➕ Freunde</button>
-            <button onclick="resetData()">🔄 Reset</button>
-            <button onclick="window.location.href='index.html'">🏠 Home</button>
-        </div>
-    </div>
-    <div id="buddyContainer" class="buddy-bar" role="list" aria-label="Freunde-Liste"></div>
+    <!-- Die Buddy-Leiste bleibt außerhalb des Haupt-Headers, aber immer noch unter dem Header -->
 </header>
+<div id="buddyContainer" class="buddy-bar" role="list" aria-label="Freunde-Liste"></div>
+
+<!-- Das neue Burger-Menü (Side Menu) -->
+<div id="sideMenu" class="side-menu">
+    <div class="side-menu-content">
+        <button class="menu-close" onclick="toggleBurgerMenu()">×</button>
+        <nav>
+            <button onclick="openModal('infoOverlay'); toggleBurgerMenu()">ℹ️ Info</button>
+            <button onclick="openModal('helpOverlay'); toggleBurgerMenu()">📖 Anleitung</button>
+            <button onclick="exportMyPlan(); toggleBurgerMenu()">📤 Teilen</button>
+            <button onclick="saveMyPlan(); toggleBurgerMenu()">💾 Sichern</button>
+            <button onclick="openModal('importOverlay'); toggleBurgerMenu()">👥 Freunde adden</button>
+            <button onclick="resetData(); toggleBurgerMenu()">🧹 Reset</button>
+            <button onclick="openHome()">🏠 Home</button>
+        </nav>
+        <div id="versionString" class="version-tag"></div>
+    </div>
+</div>
 
 <div id="messageOverlay" class="overlay">
     <div class="modal">

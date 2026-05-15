@@ -1,8 +1,9 @@
 import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
 import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies } from './modules/exportImport.js';
-import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
+import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, toggleBurgerMenu, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
+const APP_VERSION = __APP_VERSION__;
 let myData = { name: "", acts: [], lastUpdated: 0 };
 let currentEventId = "";
 let currentTimetable = null;
@@ -312,6 +313,11 @@ window.toggleBuddyVisibility = (n) => {
     }
 };
 
+window.toggleBurgerMenu = toggleBurgerMenu;
+window.openHome = () => {
+    window.location.href = 'index.html';
+};
+
 window.toggleLock = toggleLock;
 window.resetData = () => {
     try {
@@ -423,6 +429,12 @@ window.openModal = (id) => {
 };
 window.closeModal = closeModal;
 window.showMessage = showMessage;
+
+// Initialisierung von UI-Elementen
+document.addEventListener('DOMContentLoaded', () => {
+    const versionEl = document.getElementById('versionString');
+    if (versionEl) versionEl.innerText = `Version ${APP_VERSION}`;
+});
 
 // Starte die App
 init();

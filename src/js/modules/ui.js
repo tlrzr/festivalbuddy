@@ -34,6 +34,17 @@ export function closeModal(id) {
     }
 }
 
+export function toggleBurgerMenu() {
+    try {
+        const menu = document.getElementById('sideMenu');
+        if (menu) {
+            menu.classList.toggle('open');
+        }
+    } catch (e) {
+        console.error("Fehler beim Umschalten des Menüs:", e);
+    }
+}
+
 export function showMessage(title, text) { 
     try {
         const titleEl = document.getElementById('messageTitle');
@@ -260,7 +271,8 @@ export function toggleLock() {
         isLocked = !isLocked; 
         const btn = document.getElementById('lockBtn');
         if (btn) {
-            btn.innerText = isLocked ? "🔒 Locked" : "🔓 Lock"; 
+            btn.innerHTML = isLocked ? "🔒" : "🔓";
+            btn.title = isLocked ? "Plan gesperrt" : "Plan bearbeitbar";
         }
     } catch (e) {
         console.error("Fehler beim Umschalten von Lock:", e);

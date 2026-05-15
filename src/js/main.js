@@ -1,7 +1,7 @@
 import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
 import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies, setBuddies, clearBuddies } from './modules/exportImport.js';
-import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, toggleBurgerMenu, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
+import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, toggleBurgerMenu, toggleBuddyDropdown, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
 const APP_VERSION = __APP_VERSION__;
 let myData = { name: "", acts: [], lastUpdated: 0 };
@@ -332,6 +332,7 @@ window.toggleBuddyVisibility = (n) => {
 };
 
 window.toggleBurgerMenu = toggleBurgerMenu;
+window.toggleBuddyDropdown = toggleBuddyDropdown;
 window.openHome = () => {
     window.location.href = 'index.html';
 };

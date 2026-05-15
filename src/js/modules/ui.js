@@ -149,7 +149,7 @@ export function render(timetable, currentDay, myData, buddies) {
         if (!grid) return;
         
         const stages = [...new Set(timetable.timetable.map(a => a.stage))];
-        
+
         // Freunde alphabetisch sortieren für bessere Übersicht im Menü
         const sortedBuddyNames = Object.keys(buddies).sort((a, b) => a.localeCompare(b));
 

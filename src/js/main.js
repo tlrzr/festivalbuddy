@@ -198,34 +198,32 @@ async function initApp() {
             openModal('startOverlay'); 
         }
 
-        // Falls ein Code im Link ist, diesen sofort importieren
+        let importedSelf = false;
         if (selfCodeFromUrl) {
             const imported = importPersonalData(decodeURIComponent(selfCodeFromUrl));
             if (imported) {
                 myData = imported;
                 doSave();
-                startApp();
+                importedSelf = true;
             } else {
                 console.warn("Eigenen Link konnte nicht importiert werden");
             }
-
-            const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
-            window.history.replaceState({}, document.title, newUrl);
         }
-        
-        // Falls ein Freund im Link ist, diesen sofort importieren
+
         if (friendFromUrl) {
-            const imported = importSingleFriendFromUrl(decodeURIComponent(friendFromUrl));
-            if (!imported) {
+            const importedFriend = importSingleFriendFromUrl(decodeURIComponent(friendFromUrl));
+            if (!importedFriend) {
                 console.warn("Freund-Link konnte nicht importiert werden");
             }
-            // URL bereinigen
+        }
+
+        if (importedSelf || startedFromSavedData) {
+            startApp();
+        }
+
+        if (selfCodeFromUrl || friendFromUrl) {
             const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
             window.history.replaceState({}, document.title, newUrl);
-        }
-        
-        if (startedFromSavedData) {
-            startApp();
         }
 
     } catch (e) {

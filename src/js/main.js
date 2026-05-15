@@ -4,7 +4,7 @@ import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, import
 import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, toggleBurgerMenu, toggleBuddyDropdown, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
 const APP_VERSION = __APP_VERSION__;
-let myData = { name: "", acts: [], lastUpdated: 0 };
+const myData = { name: "", acts: [], lastUpdated: 0 };
 let currentEventId = "";
 let currentTimetable = null;
 
@@ -198,11 +198,9 @@ async function initApp() {
         const startedFromSavedData = Boolean(saved);
         if (saved) { 
             // Extrahiere myData und stelle Buddies wieder her
-            myData = {
-                name: saved.name || "",
-                acts: saved.acts || [],
-                lastUpdated: saved.lastUpdated || 0
-            };
+            myData.name = saved.name || "";
+            myData.acts = saved.acts || [];
+            myData.lastUpdated = saved.lastUpdated || 0;
             if (saved.buddies) setBuddies(saved.buddies);
             console.log("✅ Daten aus localStorage geladen:", myData);
         } else { 
@@ -214,7 +212,9 @@ async function initApp() {
         if (selfCodeFromUrl) {
             const imported = importPersonalData(decodeURIComponent(selfCodeFromUrl));
             if (imported) {
-                myData = imported;
+                myData.name = imported.name;
+                myData.acts = imported.acts;
+                myData.lastUpdated = imported.lastUpdated;
                 doSave();
                 importedSelf = true;
             } else {
@@ -351,7 +351,9 @@ window.confirmReset = () => {
     try {
         removeData(getEventId());
         
-        myData = { name: '', acts: [], lastUpdated: 0 };
+        myData.name = '';
+        myData.acts = [];
+        myData.lastUpdated = 0;
         clearBuddies(); // Auch die Freunde im Modul löschen
         
         const initialInput = document.getElementById('initialInput');

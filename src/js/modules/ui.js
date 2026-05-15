@@ -50,6 +50,72 @@ export function showMessage(title, text) {
     }
 }
 
+export function showToast(message) {
+    try {
+        // Erstelle Toast-Container falls nicht vorhanden
+        let toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toastContainer';
+            toastContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                pointer-events: none;
+            `;
+            document.body.appendChild(toastContainer);
+        }
+
+        // Erstelle Toast-Element
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            animation: toastSlideIn 0.3s ease-out;
+            pointer-events: auto;
+            cursor: pointer;
+        `;
+        toast.innerText = escapeHtml(String(message));
+        toast.onclick = () => toast.remove();
+
+        // Füge Toast hinzu
+        toastContainer.appendChild(toast);
+
+        // Entferne Toast nach 3 Sekunden automatisch
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.style.animation = 'toastSlideOut 0.3s ease-in forwards';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+
+        // CSS-Animationen hinzufügen falls nicht vorhanden
+        if (!document.getElementById('toastStyles')) {
+            const style = document.createElement('style');
+            style.id = 'toastStyles';
+            style.textContent = `
+                @keyframes toastSlideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes toastSlideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    } catch (e) {
+        console.error("Fehler beim Anzeigen von Toast:", e);
+    }
+}
+
 export function render(timetable, currentDay, myData, buddies) {
     try {
         if (!timetable || !timetable.timetable) {
@@ -101,8 +167,9 @@ export function render(timetable, currentDay, myData, buddies) {
             card.style.gridRow = `${Math.floor((start-720)/5)+2} / span ${Math.floor((end-start)/5)}`;
             card.style.gridColumn = stages.indexOf(act.stage) + 2;
             
+            const timeStr = `${formatTime(start)} - ${formatTime(end)}`;
             const tags = activeBuddies.map(n => `<span class="tag" style="color:${buddies[n].color}">${escapeHtml(n)}</span>`).join(' ');
-            card.innerHTML = `<span class="act-name">${escapeHtml(act.act)}</span><div class="buddy-tags">${tags}</div>`;
+            card.innerHTML = `<span class="act-name">${escapeHtml(act.act)}</span><div class="act-time">${timeStr}</div><div class="buddy-tags">${tags}</div>`;
             grid.appendChild(card);
         });
     } catch (e) {
@@ -111,7 +178,7 @@ export function render(timetable, currentDay, myData, buddies) {
     }
 }
 
-export function setupEventDelegation(myData, save, renderCallback) {
+export function setupEventDelegation(myData, save, renderCallback, trackClickCallback) {
     try {
         const grid = document.getElementById('mainGrid');
         if (!grid) {
@@ -134,6 +201,10 @@ export function setupEventDelegation(myData, save, renderCallback) {
                 try {
                     save(); 
                     renderCallback();
+                    // Klick zählen für Erinnerung
+                    if (typeof trackClickCallback === 'function') {
+                        trackClickCallback();
+                    }
                 } catch (e) {
                     console.error("Fehler beim Speichern:", e);
                     showMessage("Fehler", e.message || "Daten konnten nicht gespeichert werden");
@@ -211,10 +282,83 @@ export function handleInitialStart(myData, save, startApp) {
         myData.lastUpdated = Date.now();
         
         save();
+        closeModal('startOverlay');
         startApp();
     } catch (e) {
         console.error("Fehler bei Initialisierung:", e);
         showMessage("Fehler", e.message || "Es ist ein Fehler aufgetreten");
+    }
+}
+
+export function handleCodeImportAtStart(myData, importFn, save, startApp) {
+    try {
+        const input = document.getElementById('startCodeInput');
+        if (!input) {
+            console.warn("startCodeInput nicht gefunden");
+            return;
+        }
+
+        const code = input.value.trim();
+        if (!code) {
+            showMessage("Eingabe erforderlich", "Bitte füge einen Code ein");
+            return;
+        }
+
+        // Versuche Code zu importieren
+        const imported = importFn(code);
+        if (!imported) {
+            showMessage("Fehler", "Code konnte nicht importiert werden. Überprüfe ihn und versuche es erneut.");
+            return;
+        }
+
+        // Erfolgreicher Import
+        save();
+        closeModal('startOverlay');
+        startApp();
+        showMessage("Erfolg", "Plan wurde importiert!");
+    } catch (e) {
+        console.error("Fehler beim Import beim Start:", e);
+        showMessage("Fehler", e.message || "Import ist fehlgeschlagen");
+    }
+}
+
+export function switchTab(tabName) {
+    try {
+        const nameTab = document.getElementById('startNameTab');
+        const codeTab = document.getElementById('startCodeTab');
+        
+        if (!nameTab || !codeTab) {
+            console.warn("Tab-Elemente nicht gefunden");
+            return;
+        }
+
+        if (tabName === 'name') {
+            nameTab.style.display = 'block';
+            codeTab.style.display = 'none';
+        } else if (tabName === 'code') {
+            nameTab.style.display = 'none';
+            codeTab.style.display = 'block';
+        }
+    } catch (e) {
+        console.error("Fehler beim Tab-Wechsel:", e);
+    }
+}
+
+export function switchInfoTab(tabName) {
+    try {
+        // Tab-Buttons aktualisieren
+        const tabs = document.querySelectorAll('.info-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        const activeTab = document.querySelector(`[onclick="switchInfoTab('${tabName}')"]`);
+        if (activeTab) activeTab.classList.add('active');
+
+        // Tab-Inhalte aktualisieren
+        const contents = document.querySelectorAll('.info-tab-content');
+        contents.forEach(content => content.classList.remove('active'));
+        const activeContent = document.getElementById(`${tabName}Tab`);
+        if (activeContent) activeContent.classList.add('active');
+    } catch (e) {
+        console.error("Fehler beim Info-Tab-Wechsel:", e);
     }
 }
 
@@ -226,5 +370,17 @@ function parseT(t) {
     } catch (e) {
         console.error("Fehler beim Parsen der Zeit:", t);
         return 0;
+    }
+}
+
+function formatTime(minutes) {
+    try {
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        const displayH = h >= 24 ? h - 24 : h;
+        return `${displayH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    } catch (e) {
+        console.error("Fehler beim Formatieren der Zeit:", minutes);
+        return "00:00";
     }
 }

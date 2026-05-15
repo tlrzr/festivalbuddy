@@ -149,6 +149,49 @@ export function importSingleFriendFromUrl(code) {
     return importSingleFriend(code);
 }
 
+export function importPersonalData(code) {
+    try {
+        if (!code || code.length < 5) return null;
+
+        let clean = code.trim();
+        if (clean.includes('friend=')) {
+            clean = clean.split('friend=')[1].split('&')[0];
+        }
+        if (clean.includes('http://') || clean.includes('https://')) {
+            const url = new URL(clean, window.location.origin);
+            const friendParam = url.searchParams.get('friend');
+            if (!friendParam) return null;
+            clean = friendParam;
+        }
+        
+        const decoded = atob(clean);
+        const data = JSON.parse(decodeURIComponent(escape(decoded)));
+        
+        if (!data.name || typeof data.name !== 'string' || !Array.isArray(data.acts)) {
+            return null;
+        }
+        
+        // Name validieren
+        const cleanName = escapeHtml(data.name.trim().substring(0, 50));
+        if (!cleanName) return null;
+
+        // Acts validieren
+        if (data.acts.length > 100) return null;
+        const cleanActs = data.acts
+            .filter(a => typeof a === 'string' && a.length > 0)
+            .map(a => escapeHtml(a.substring(0, 100)));
+
+        return {
+            name: cleanName,
+            acts: cleanActs,
+            lastUpdated: data.lastUpdated || 0
+        };
+    } catch (e) {
+        console.error("Fehler beim Importieren von persönlichen Daten:", e);
+        return null;
+    }
+}
+
 // Helper functions (sollten eigentlich von ui.js kommen, aber hier für Kompatibilität)
 function openModal(id) { 
     const modal = document.getElementById(id);

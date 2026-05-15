@@ -13,7 +13,7 @@
     <div class="header-top-row">
         <div class="header-left">
             <div class="nav-days" id="dayNav"></div>
-            <button onclick="openModal('infoOverlay')" class="btn-icon-round" aria-label="Info öffnen">i</button>
+            <button onclick="openModal('infoOverlay'); populateInfoModal();" class="btn-icon-round" aria-label="Info öffnen">i</button>
         </div>
     </div>
     <div class="toolbar">
@@ -22,6 +22,7 @@
             <button onclick="openModal('helpOverlay')">❓ Anleitung</button>
             <button onclick="exportMyPlan()" class="btn-export">📤 Teilen</button>
             <button onclick="openModal('importOverlay')">➕ Freunde</button>
+            <button onclick="resetData()">🔄 Reset</button>
             <button onclick="window.location.href='index.html'">🏠 Home</button>
         </div>
     </div>
@@ -79,8 +80,75 @@
     </div>
 </div>
 
-<div id="startOverlay" class="overlay"><div class="modal"><h2>Willkommen</h2><p>Dein Name:</p><input type="text" id="initialInput"><button onclick="handleInitialStart()" class="btn-full">Starten</button></div></div>
-<div id="infoOverlay" class="overlay"><div class="modal"><h2>Festival Info</h2><div id="festFullDetails"></div><button class="btn-full" onclick="closeModal('infoOverlay')">Schließen</button></div></div>
+<div id="startOverlay" class="overlay">
+    <div class="modal">
+        <h2>Willkommen 👋</h2>
+        <p style="text-align: center; margin-bottom: 20px;">Neue oder existierende Installation?</p>
+        
+        <!-- Tab 1: Neuer Name -->
+        <div id="startNameTab" style="display: block;">
+            <h3>Neuer Benutzer</h3>
+            <p>Dein Name:</p>
+            <input type="text" id="initialInput" placeholder="z.B. Anna" autocomplete="off">
+            <button onclick="handleInitialStart()" class="btn-full">Starten</button>
+            <p style="font-size: 0.85rem; color: #aaa; text-align: center; margin-top: 15px;">
+                oder <a href="#" onclick="switchTab('code'); return false;" style="color: var(--accent);">Code importieren</a>
+            </p>
+        </div>
+        
+        <!-- Tab 2: Code Importieren -->
+        <div id="startCodeTab" style="display: none;">
+            <h3>Bestehender Plan</h3>
+            <p>Gib deinen Code ein:</p>
+            <textarea id="startCodeInput" placeholder="Kopiere hier deinen Export-Link ein..." rows="4" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #444; background: #1a1a1a; color: #fff; font-size: 0.85rem;"></textarea>
+            <button onclick="handleCodeImportAtStart()" class="btn-full">Importieren</button>
+            <p style="font-size: 0.85rem; color: #aaa; text-align: center; margin-top: 15px;">
+                oder <a href="#" onclick="switchTab('name'); return false;" style="color: var(--accent);">neuen Namen eingeben</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="resetConfirmOverlay" class="overlay">
+    <div class="modal">
+        <h2 style="color: var(--accent);">⚠️ Reset bestätigen</h2>
+        <p>Möchtest du wirklich alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.</p>
+        <p style="font-size: 0.9rem; color: #aaa;">Dein Name und alle ausgewählten Acts werden gelöscht.</p>
+        <button onclick="confirmReset()" class="btn-full" style="background: var(--accent); color: #000;">Ja, alle Daten löschen</button>
+        <button onclick="closeModal('resetConfirmOverlay')" class="btn-full" style="background: #444;">Abbrechen</button>
+    </div>
+</div>
+
+<div id="infoOverlay" class="overlay">
+    <div class="modal modal-large">
+        <h2>ℹ️ Informationen</h2>
+
+        <div class="info-tabs">
+            <button class="info-tab active" onclick="switchInfoTab('festival')">Festival</button>
+            <button class="info-tab" onclick="switchInfoTab('profile')">Profil</button>
+            <button class="info-tab" onclick="switchInfoTab('stats')">Statistiken</button>
+        </div>
+
+        <div class="info-content">
+            <div id="festivalTab" class="info-tab-content active">
+                <h3>Festival-Informationen</h3>
+                <div id="festFullDetails"></div>
+            </div>
+
+            <div id="profileTab" class="info-tab-content">
+                <h3>Dein Profil</h3>
+                <div id="userProfile"></div>
+            </div>
+
+            <div id="statsTab" class="info-tab-content">
+                <h3>Deine Statistiken</h3>
+                <div id="userStats"></div>
+            </div>
+        </div>
+
+        <button class="btn-full" onclick="closeModal('infoOverlay')">Schließen</button>
+    </div>
+</div>
 
 <div class="wrapper">
     <div id="mainGrid" class="grid"></div>

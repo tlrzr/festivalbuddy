@@ -46,3 +46,16 @@ export function loadData(eventId) {
         return null;
     }
 }
+
+export function removeData(eventId) {
+    try {
+        if (!eventId) {
+            throw new Error("eventId ist erforderlich");
+        }
+        localStorage.removeItem(`${STORAGE_PREFIX}${eventId}`);
+        return true;
+    } catch (e) {
+        console.error("Fehler beim Löschen der Daten:", e);
+        return false;
+    }
+}

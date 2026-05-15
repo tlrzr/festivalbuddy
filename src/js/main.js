@@ -1,6 +1,6 @@
 import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
-import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies } from './modules/exportImport.js';
+import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies, setBuddies, clearBuddies } from './modules/exportImport.js';
 import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, toggleBurgerMenu, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
 const APP_VERSION = __APP_VERSION__;
@@ -24,7 +24,12 @@ function doRender() {
 // Helper: Speichern mit Error Handling
 function doSave() {
     try {
-        saveData(getEventId(), myData);
+        // Wir speichern myData UND die Buddies in einem Objekt
+        const dataToSave = {
+            ...myData,
+            buddies: getBuddies()
+        };
+        saveData(getEventId(), dataToSave);
         console.log("✅ Daten gespeichert:", myData);
     } catch (e) {
         console.error("Fehler beim Speichern:", e);
@@ -192,7 +197,13 @@ async function initApp() {
         const saved = loadData(eventId);
         const startedFromSavedData = Boolean(saved);
         if (saved) { 
-            myData = saved;
+            // Extrahiere myData und stelle Buddies wieder her
+            myData = {
+                name: saved.name || "",
+                acts: saved.acts || [],
+                lastUpdated: saved.lastUpdated || 0
+            };
+            if (saved.buddies) setBuddies(saved.buddies);
             console.log("✅ Daten aus localStorage geladen:", myData);
         } else { 
             console.log("ℹ️ Keine Daten in localStorage, neues Formular zeigen");
@@ -212,13 +223,18 @@ async function initApp() {
         }
 
         if (friendCodesFromUrl.length > 0) {
+            let newlyImported = false;
             friendCodesFromUrl.forEach(code => {
                 if (!code) return;
                 const importedFriend = importSingleFriendFromUrl(decodeURIComponent(code));
-                if (!importedFriend) {
+                if (importedFriend) {
+                    newlyImported = true;
+                } else {
                     console.warn("Freund-Link konnte nicht importiert werden:", code);
                 }
             });
+
+            if (newlyImported) doSave(); // Dauerhaft speichern, damit F5 funktioniert
 
             const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
             window.history.replaceState({}, document.title, newUrl);
@@ -297,6 +313,7 @@ window.copySaveCode = copySaveCode;
 window.confirmFriendImport = () => {
     try {
         confirmFriendImport();
+        doSave(); // Speichere die neuen Freunde dauerhaft
         doRender();
     } catch (e) {
         console.error("Import-Fehler:", e);
@@ -307,6 +324,7 @@ window.confirmFriendImport = () => {
 window.toggleBuddyVisibility = (n) => {
     try {
         toggleBuddyVisibility(n, getBuddies()); 
+        doSave(); // Merke dir, welche Freunde ausgeblendet sind
         doRender();
     } catch (e) {
         console.error("Fehler beim Umschalten von Buddy:", e);
@@ -333,6 +351,7 @@ window.confirmReset = () => {
         removeData(getEventId());
         
         myData = { name: '', acts: [], lastUpdated: 0 };
+        clearBuddies(); // Auch die Freunde im Modul löschen
         
         const initialInput = document.getElementById('initialInput');
         if (initialInput) {

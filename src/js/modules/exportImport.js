@@ -16,6 +16,14 @@ function escapeHtml(text) {
 
 export function getBuddies() { return buddies; }
 
+export function setBuddies(newBuddies) {
+    buddies = newBuddies || {};
+}
+
+export function clearBuddies() {
+    buddies = {};
+}
+
 export function exportMyPlan(myData, timetable, eventId) {
     if (!myData || !timetable || !eventId) {
         console.error("Fehlendes Argument für exportMyPlan");

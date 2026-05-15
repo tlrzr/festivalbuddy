@@ -139,10 +139,13 @@ export function render(timetable, currentDay, myData, buddies) {
         
         const stages = [...new Set(timetable.timetable.map(a => a.stage))];
         
+        // Freunde alphabetisch sortieren
+        const sortedBuddyNames = Object.keys(buddies).sort((a, b) => a.localeCompare(b));
+
         // Buddy Bar
         const bar = document.getElementById('buddyContainer');
         if (bar) {
-            bar.innerHTML = Object.keys(buddies).map(n => `
+            bar.innerHTML = sortedBuddyNames.map(n => `
                 <div class="buddy-badge ${buddies[n].visible ? 'active' : ''}" 
                      style="--b-color:${buddies[n].color}" onclick="toggleBuddyVisibility('${escapeHtml(n)}')">
                     ${escapeHtml(n)}
@@ -167,7 +170,7 @@ export function render(timetable, currentDay, myData, buddies) {
         // Acts
         const dayActs = timetable.timetable.filter(a => a.day === currentDay);
         dayActs.forEach(act => {
-            const activeBuddies = Object.keys(buddies).filter(n => buddies[n].visible && buddies[n].acts.includes(act.act));
+            const activeBuddies = sortedBuddyNames.filter(n => buddies[n].visible && buddies[n].acts.includes(act.act));
             const isMe = myData.acts.includes(act.act);
             
             const card = document.createElement('div');

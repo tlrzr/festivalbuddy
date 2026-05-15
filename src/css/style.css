@@ -7,7 +7,11 @@
     --match-full: #f1c40f;
     --match-others: #85752b;
     --locked: #ffcc00;
-    --border: #333;
+    --border: #333; 
+    /* Berechnete Höhen für Sticky-Elemente */
+    --header-height: 53px; /* 20px padding + ~32px content height + 1px border */
+    --buddy-bar-height: 44px; /* 20px padding + ~24px content height */
+    --sticky-offset-top: calc(var(--header-height) + var(--buddy-bar-height));
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +32,7 @@ header {
     position: sticky; 
     top: 0; 
     z-index: 100; 
+    /* --header-height ist hier definiert */
 }
 
 .header-main { 
@@ -325,6 +330,9 @@ input:focus, textarea:focus {
     padding: 10px 12px; 
     background: #080808; 
     scrollbar-width: none; 
+    position: sticky;
+    top: var(--header-height);
+    z-index: 90;
 }
 
 .buddy-bar::-webkit-scrollbar { display: none; }
@@ -358,6 +366,7 @@ input:focus, textarea:focus {
     background: #222; 
     border: 1px solid #333; 
     position: relative;
+    overflow: visible; /* Wichtig, damit sticky Elemente nicht abgeschnitten werden */
 }
 
 .stage-header { 
@@ -365,14 +374,21 @@ input:focus, textarea:focus {
     padding: 12px 4px; 
     font-weight: bold; 
     text-align: center; 
-    font-size: 0.7rem; 
+    font-size: 0.7rem;
     position: sticky; 
-    top: 0; 
+    top: var(--sticky-offset-top); /* Klebt unter Header und Buddy-Leiste */
     z-index: 20; 
     border-bottom: 2px solid var(--accent);
     color: #fff;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+.sticky-corner-header {
+    position: sticky;
+    left: 0;
+    top: var(--sticky-offset-top); /* Klebt an der gleichen Position wie die Stage-Header */
+    z-index: 25; /* Höher als Stage-Header und Time-Labels */
+    background: var(--bg); /* Hintergrund, um beim horizontalen Scrollen zu überdecken */
 }
 
 .time-label { 
@@ -381,7 +397,11 @@ input:focus, textarea:focus {
     text-align: right; 
     padding-right: 6px; 
     font-family: monospace;
-    background: var(--bg);
+    background: var(--bg); /* Hintergrund, um beim horizontalen Scrollen zu überdecken */
+    position: sticky; /* Macht die Zeit-Labels sticky */
+    left: 0; /* Klebt am linken Rand */
+    top: var(--sticky-offset-top); /* Klebt an der gleichen Position wie die Stage-Header */
+    z-index: 10; /* Unter Stage-Header, über Acts */
 }
 
 /* --- ACTS / CARDS --- */

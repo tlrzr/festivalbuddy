@@ -152,7 +152,7 @@ export function render(timetable, currentDay, myData, buddies) {
 
         // Grid-Header
         grid.style.gridTemplateColumns = `45px repeat(${stages.length}, 1fr)`;
-        grid.innerHTML = `<div class="stage-header" style="left:0; z-index:25">Zeit</div>` + 
+        grid.innerHTML = `<div class="stage-header sticky-corner-header">Zeit</div>` + 
                          stages.map(s => `<div class="stage-header">${escapeHtml(s)}</div>`).join('');
 
         // Zeit-Skala

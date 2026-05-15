@@ -185,7 +185,7 @@ async function initApp() {
         currentEventId = eventId;
         currentTimetable = timetable;
 
-        const friendFromUrl = params.get('friend');
+        const friendCodesFromUrl = params.getAll('friend');
         const selfCodeFromUrl = params.get('code');
 
         const saved = loadData(eventId);
@@ -210,18 +210,24 @@ async function initApp() {
             }
         }
 
-        if (friendFromUrl) {
-            const importedFriend = importSingleFriendFromUrl(decodeURIComponent(friendFromUrl));
-            if (!importedFriend) {
-                console.warn("Freund-Link konnte nicht importiert werden");
-            }
+        if (friendCodesFromUrl.length > 0) {
+            friendCodesFromUrl.forEach(code => {
+                if (!code) return;
+                const importedFriend = importSingleFriendFromUrl(decodeURIComponent(code));
+                if (!importedFriend) {
+                    console.warn("Freund-Link konnte nicht importiert werden:", code);
+                }
+            });
+
+            const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
+            window.history.replaceState({}, document.title, newUrl);
         }
 
         if (importedSelf || startedFromSavedData) {
             startApp();
         }
 
-        if (selfCodeFromUrl || friendFromUrl) {
+        if (selfCodeFromUrl || friendCodesFromUrl.length > 0) {
             const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
             window.history.replaceState({}, document.title, newUrl);
         }

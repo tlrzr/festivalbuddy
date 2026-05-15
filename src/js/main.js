@@ -186,6 +186,7 @@ async function initApp() {
         currentTimetable = timetable;
 
         const friendFromUrl = params.get('friend');
+        const selfCodeFromUrl = params.get('code');
 
         const saved = loadData(eventId);
         const startedFromSavedData = Boolean(saved);
@@ -197,6 +198,21 @@ async function initApp() {
             openModal('startOverlay'); 
         }
 
+        // Falls ein Code im Link ist, diesen sofort importieren
+        if (selfCodeFromUrl) {
+            const imported = importPersonalData(decodeURIComponent(selfCodeFromUrl));
+            if (imported) {
+                myData = imported;
+                doSave();
+                startApp();
+            } else {
+                console.warn("Eigenen Link konnte nicht importiert werden");
+            }
+
+            const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+        
         // Falls ein Freund im Link ist, diesen sofort importieren
         if (friendFromUrl) {
             const imported = importSingleFriendFromUrl(decodeURIComponent(friendFromUrl));

@@ -211,6 +211,35 @@ export function setupEventDelegation(myData, save, renderCallback, trackClickCal
                 }
             }
         });
+
+        grid.addEventListener('contextmenu', (e) => {
+            const card = e.target.closest('.act');
+            if (!card) return;
+            e.preventDefault();
+            openActContextMenu(card.dataset.actName, e.clientX, e.clientY);
+        });
+
+        let touchTimer = null;
+
+        grid.addEventListener('touchstart', (e) => {
+            const card = e.target.closest('.act');
+            if (!card) return;
+            touchTimer = window.setTimeout(() => {
+                const touch = e.touches[0];
+                openActContextMenu(card.dataset.actName, touch.clientX, touch.clientY);
+            }, 500);
+        });
+
+        grid.addEventListener('touchend', () => {
+            clearTimeout(touchTimer);
+        });
+        grid.addEventListener('touchmove', () => {
+            clearTimeout(touchTimer);
+        });
+        grid.addEventListener('touchcancel', () => {
+            clearTimeout(touchTimer);
+        });    
+
     } catch (e) {
         console.error("Fehler beim Setup Event Delegation:", e);
     }
@@ -384,3 +413,43 @@ function formatTime(minutes) {
         return "00:00";
     }
 }
+
+function formatWikiLink(name, lang) {
+    const safeName = encodeURIComponent(name.replace(/ /g, '_'));
+    return `https://${lang}.wikipedia.org/wiki/${safeName}`;
+}
+
+export function openActContextMenu(actName, x, y) {
+    if (!actName) return;
+    const menu = document.getElementById('actContextMenu');
+    const wikiDELink = document.getElementById('wikiDeLink');
+    const wikiENLink = document.getElementById('wikiEnLink');
+    const spotifyLink = document.getElementById('spotifyLink');
+    const spotifyAppLink = document.getElementById('spotifyAppLink');
+    const youtubeLink = document.getElementById('youtubeLink');
+    const deezerLink = document.getElementById('deezerLink');
+    const soundcloudLink = document.getElementById('soundcloudLink');
+    const appleMusicLink = document.getElementById('appleMusicLink');
+    const amazonMusicLink = document.getElementById('amazonMusicLink');
+    if (!menu || !wikiDELink || !wikiENLink || !spotifyLink) return;
+
+    wikiDELink.href = formatWikiLink(actName, 'de');
+    wikiENLink.href = formatWikiLink(actName, 'en');
+    spotifyLink.href = `https://open.spotify.com/search/${encodeURIComponent(actName)}`;
+    spotifyAppLink.href = `spotify:search:${encodeURIComponent(actName)}`;
+    youtubeLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(actName)}`;
+    deezerLink.href = `https://www.deezer.com/search/${encodeURIComponent(actName)}`;
+    appleMusicLink.href = `https://music.apple.com/search?term=${encodeURIComponent(actName)}`;
+    amazonMusicLink.href = `https://music.amazon.com/search?q=${encodeURIComponent(actName)}`;
+
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    menu.style.display = 'flex';
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#actContextMenu')) {
+        const menu = document.getElementById('actContextMenu');
+        if (menu) menu.style.display = 'none';
+    }
+});

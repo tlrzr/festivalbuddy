@@ -508,7 +508,8 @@ input:focus, textarea:focus {
 
 /* --- HILFE & DOKU --- */
 .doku-list { font-size: 0.9rem; line-height: 1.5; color: #ccc; }
-.doku-list p { margin: 12px 0; }
+.doku-list p { margin: 10px 0; }
+.doku-list h4 { color: #fff; margin: 16px 0 8px 0; border-bottom: 1px solid #333; padding-bottom: 4px; }
 .doku-list b { color: var(--accent); }
 .doku-list ul { padding-left: 20px; margin: 8px 0; }
 .doku-list li { margin-bottom: 6px; }

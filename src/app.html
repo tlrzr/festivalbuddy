@@ -86,19 +86,28 @@
     <div class="modal">
         <h3>📖 Anleitung</h3>
         <div class="doku-list">
-            <p><b>1. Bands wählen:</b> Klicke auf einen Act im Plan. Ein <b>roter Rand</b> bedeutet, dass du dort bist. Deine Auswahl wird automatisch gespeichert.</p>
-            <p><b>2. 🔒 Lock-Modus:</b> Aktiviere "Lock", um versehentliches Klicken beim Scrollen in der Menge zu verhindern.</p>
-            <p><b>3. 📤 Teilen:</b> Klicke auf "Teilen", um einen Link zu generieren. Schicke diesen an deine Freunde.</p>
-            <p><b>4. ➕ Freunde hinzufügen:</b> Füge den Link/Code eines Freundes ein. Er erscheint als farbiger Badge oben.</p>
-            <p><b>5. 👥 Buddy-Filter & Matches:</b>
+            <h4>Grundlagen</h4>
+            <p><b>Acts wählen:</b> Klicke auf eine Band im Plan. Ein <b>roter Rand</b> markiert deinen Favoriten.</p>
+            <p><b>🔒 Lock-Modus:</b> Nutze das Schloss-Symbol oben rechts, um das Bearbeiten zu sperren. Ideal, um in der Menge nicht versehentlich etwas zu verstellen.</p>
+            <p><b>ℹ️ Band-Infos:</b> Halte einen Act <b>länger gedrückt</b> (oder Rechtsklick), um Links zu Spotify, Wikipedia und YouTube zu öffnen.</p>
+
+            <h4>Freunde & Koordination</h4>
+            <p><b>➕ Freunde hinzufügen:</b> Gehe im Menü auf "Freunde adden" und füge den Link eines Freundes ein. Er erscheint dann als farbiger Badge im Filter.</p>
+            <p><b>👥 Filter & Matches:</b>
                 <ul>
-                    <li>Klicke auf den Namen eines Freundes, um seine Auswahl ein/auszublenden.</li>
-                    <li><b>Gelbe Box:</b> Match! Du und ein Freund wollt zu diesem Act.</li>
-                    <li>In der Box siehst du unten klein die Namen der Freunde, die auch dort sind.</li>
+                    <li>Klicke im 👥-Menü auf Namen, um deren Pläne ein- oder auszublenden.</li>
+                    <li><b>Gelbe Acts:</b> Ein "Perfect Match"! Du und mindestens ein Freund wollt dorthin.</li>
+                    <li>Die Kürzel der Freunde stehen unten in der Act-Box.</li>
                 </ul>
             </p>
+
+            <h4>Speichern & Backup</h4>
+            <p><b>📤 Teilen:</b> Erstellt einen Link <u>nur mit deinen</u> Favoriten. Ideal für neue Freunde.</p>
+            <p><b>💾 Sichern:</b> Erstellt einen "Master-Link", der <u>deine Daten UND alle importierten Freunde</u> enthält. Nutze dies als dein persönliches Backup!</p>
+            <p><b>🧹 Reset:</b> Löscht alle deine lokalen Daten und Freunde für dieses Festival.</p>
+
             <div class="warning-box">
-                ⚠️ <b>Hinweis:</b> Daten werden nur lokal im Browser gespeichert. Löschst du den Cache, ist dein Plan weg. Nutze "Teilen", um dir selbst ein Backup des Links zu schicken!
+                ⚠️ <b>Wichtig:</b> Die App nutzt den <i>localStorage</i> deines Browsers. Wenn du den Browserverlauf/Cache löschst, sind die Daten weg. Nutze <b>Sichern</b>, um dir den Link als Backup z.B. per WhatsApp selbst zu schicken!
             </div>
         </div>
         <button onclick="closeModal('helpOverlay')" class="btn-full" aria-label="Anleitung schließen">OK</button>

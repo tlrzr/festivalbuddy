@@ -1,6 +1,6 @@
 import { saveData, loadData, removeData } from './modules/storage.js';
 import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay } from './modules/timetable.js';
-import { exportMyPlan, copyExportCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, getBuddies } from './modules/exportImport.js';
+import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies } from './modules/exportImport.js';
 import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
 let myData = { name: "", acts: [], lastUpdated: 0 };
@@ -185,7 +185,8 @@ async function initApp() {
         currentEventId = eventId;
         currentTimetable = timetable;
 
-        const friendFromUrl = params.get('friend');
+        const friendCodesFromUrl = params.getAll('friend');
+        const selfCodeFromUrl = params.get('code');
 
         const saved = loadData(eventId);
         const startedFromSavedData = Boolean(saved);
@@ -197,19 +198,38 @@ async function initApp() {
             openModal('startOverlay'); 
         }
 
-        // Falls ein Freund im Link ist, diesen sofort importieren
-        if (friendFromUrl) {
-            const imported = importSingleFriendFromUrl(decodeURIComponent(friendFromUrl));
-            if (!imported) {
-                console.warn("Freund-Link konnte nicht importiert werden");
+        let importedSelf = false;
+        if (selfCodeFromUrl) {
+            const imported = importPersonalData(decodeURIComponent(selfCodeFromUrl));
+            if (imported) {
+                myData = imported;
+                doSave();
+                importedSelf = true;
+            } else {
+                console.warn("Eigenen Link konnte nicht importiert werden");
             }
-            // URL bereinigen
+        }
+
+        if (friendCodesFromUrl.length > 0) {
+            friendCodesFromUrl.forEach(code => {
+                if (!code) return;
+                const importedFriend = importSingleFriendFromUrl(decodeURIComponent(code));
+                if (!importedFriend) {
+                    console.warn("Freund-Link konnte nicht importiert werden:", code);
+                }
+            });
+
             const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
             window.history.replaceState({}, document.title, newUrl);
         }
-        
-        if (startedFromSavedData) {
+
+        if (importedSelf || startedFromSavedData) {
             startApp();
+        }
+
+        if (selfCodeFromUrl || friendCodesFromUrl.length > 0) {
+            const newUrl = window.location.origin + window.location.pathname + "?event=" + eventId;
+            window.history.replaceState({}, document.title, newUrl);
         }
 
     } catch (e) {
@@ -253,6 +273,25 @@ window.exportMyPlan = () => {
 };
 
 window.copyExportCode = copyExportCode;
+
+window.saveMyPlan = () => {
+    try {
+        const url = saveMyPlan(myData, getEventId(), getBuddies());
+        if (!url) return;
+
+        // const area = document.getElementById('exportCodeArea');
+        const area = document.getElementById('saveCodeArea');
+        if (area) {
+            area.value = url;
+            openModal('saveOverlay');
+        }
+    } catch (e) {
+        console.error("Save-Fehler:", e);
+        showMessage("Fehler", "Plan konnte nicht gesichert werden");
+    }
+};
+
+window.copySaveCode = copySaveCode;
 
 window.confirmFriendImport = () => {
     try {

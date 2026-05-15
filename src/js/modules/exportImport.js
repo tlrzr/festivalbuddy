@@ -40,6 +40,33 @@ export function exportMyPlan(myData, timetable, eventId) {
     }
 }
 
+export function saveMyPlan(myData, eventId, buddies) {
+    if (!myData || !eventId) {
+        console.error("Fehlendes Argument für saveMyPlan");
+        return null;
+    }
+
+    const myCode = btoa(unescape(encodeURIComponent(JSON.stringify(myData))));
+
+    const friendParams = Object.entries(buddies).map(([name, buddy]) => {
+        const friendData = {
+            name,
+            acts: buddy.acts || [],
+            lastUpdated: buddy.lastUpdated || 0
+        };
+        const friendCode = btoa(unescape(encodeURIComponent(JSON.stringify(friendData))));
+        return `friend=${encodeURIComponent(friendCode)}`;
+    });
+
+    const params = [
+        `event=${encodeURIComponent(eventId)}`,
+        `code=${encodeURIComponent(myCode)}`,
+        ...friendParams
+    ].join('&');
+
+    return `${window.location.origin}${window.location.pathname}?${params}`;
+}
+
 export async function copyExportCode() {
     try {
         const shareUrl = document.getElementById('exportCodeArea').value;
@@ -68,6 +95,38 @@ export async function copyExportCode() {
         }
     } catch (e) {
         console.error("Fehler in copyExportCode:", e);
+    }
+}
+
+export async function copySaveCode() {
+    try {
+        const shareUrl = document.getElementById('saveCodeArea').value;
+        
+        if (false) {
+        // if (navigator.share) {
+        //     try {
+        //         await navigator.share({
+        //             title: 'FestivalBuddy Plan',
+        //             text: `Hier ist meine Sicherung für das Festival!`,
+        //             url: shareUrl
+        //         });
+        //         closeModal('saveOverlay');
+        //     } catch (err) {
+        //         if (err.name !== 'AbortError') {
+        //             console.error("Fehler beim Sichern:", err);
+        //         }
+        //     }
+        } else {
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showMessage("Kopiert", "Der Link wurde in die Zwischenablage kopiert.");
+                closeModal('saveOverlay');
+            }).catch(err => {
+                console.error("Fehler beim Kopieren:", err);
+                showMessage("Fehler", "Link konnte nicht kopiert werden");
+            });
+        }
+    } catch (e) {
+        console.error("Fehler in copySaveCode:", e);
     }
 }
 

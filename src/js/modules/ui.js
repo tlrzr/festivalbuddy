@@ -45,6 +45,17 @@ export function toggleBurgerMenu() {
     }
 }
 
+export function toggleBuddyDropdown() {
+    try {
+        const dropdown = document.getElementById('buddyDropdown');
+        if (dropdown) {
+            dropdown.classList.toggle('show');
+        }
+    } catch (e) {
+        console.error("Fehler beim Umschalten des Buddy-Dropdowns:", e);
+    }
+}
+
 export function showMessage(title, text) { 
     try {
         const titleEl = document.getElementById('messageTitle');
@@ -139,10 +150,13 @@ export function render(timetable, currentDay, myData, buddies) {
         
         const stages = [...new Set(timetable.timetable.map(a => a.stage))];
         
+        // Freunde alphabetisch sortieren für bessere Übersicht im Menü
+        const sortedBuddyNames = Object.keys(buddies).sort((a, b) => a.localeCompare(b));
+
         // Buddy Bar
         const bar = document.getElementById('buddyContainer');
         if (bar) {
-            bar.innerHTML = Object.keys(buddies).map(n => `
+            bar.innerHTML = sortedBuddyNames.map(n => `
                 <div class="buddy-badge ${buddies[n].visible ? 'active' : ''}" 
                      style="--b-color:${buddies[n].color}" onclick="toggleBuddyVisibility('${escapeHtml(n)}')">
                     ${escapeHtml(n)}
@@ -152,7 +166,7 @@ export function render(timetable, currentDay, myData, buddies) {
 
         // Grid-Header
         grid.style.gridTemplateColumns = `45px repeat(${stages.length}, 1fr)`;
-        grid.innerHTML = `<div class="stage-header" style="left:0; z-index:25">Zeit</div>` + 
+        grid.innerHTML = `<div class="stage-header sticky-corner-header">Zeit</div>` + 
                          stages.map(s => `<div class="stage-header">${escapeHtml(s)}</div>`).join('');
 
         // Zeit-Skala
@@ -167,7 +181,7 @@ export function render(timetable, currentDay, myData, buddies) {
         // Acts
         const dayActs = timetable.timetable.filter(a => a.day === currentDay);
         dayActs.forEach(act => {
-            const activeBuddies = Object.keys(buddies).filter(n => buddies[n].visible && buddies[n].acts.includes(act.act));
+            const activeBuddies = sortedBuddyNames.filter(n => buddies[n].visible && buddies[n].acts.includes(act.act));
             const isMe = myData.acts.includes(act.act);
             
             const card = document.createElement('div');
@@ -460,8 +474,15 @@ export function openActContextMenu(actName, x, y) {
 }
 
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('#actContextMenu')) {
-        const menu = document.getElementById('actContextMenu');
-        if (menu) menu.style.display = 'none';
+    // Context Menu schließen
+    const menu = document.getElementById('actContextMenu');
+    if (menu && !e.target.closest('#actContextMenu')) {
+        menu.style.display = 'none';
+    }
+
+    // Buddy Dropdown schließen, wenn außerhalb geklickt wird
+    const dropdown = document.getElementById('buddyDropdown');
+    if (dropdown && dropdown.classList.contains('show') && !e.target.closest('.dropdown')) {
+        dropdown.classList.remove('show');
     }
 });

@@ -3,7 +3,7 @@ import { initTimetable, getTimetable, getEventId, getCurrentDay, setCurrentDay }
 import { exportMyPlan, copyExportCode, copySaveCode, confirmFriendImport, importSingleFriendFromUrl, importPersonalData, saveMyPlan, getBuddies } from './modules/exportImport.js';
 import { render, setupEventDelegation, toggleBuddyVisibility, toggleLock, toggleBurgerMenu, buildNav, openModal, closeModal, showMessage, handleInitialStart, setLocked, switchTab, switchInfoTab, showToast } from './modules/ui.js';
 
-const APP_VERSION = "1.1.0";
+const APP_VERSION = __APP_VERSION__;
 let myData = { name: "", acts: [], lastUpdated: 0 };
 let currentEventId = "";
 let currentTimetable = null;
